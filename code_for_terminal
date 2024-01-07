@@ -1,0 +1,8 @@
+$ cd ~/Desktop
+$ cd /Applications/G4beamline-3.08.app/Contents/MacOS/
+$ source /Applications/G4beamline-3.08.app/Contents/MacOS/            
+$ source /Applications/G4beamline-3.08.app/Contents/MacOS/g4bl-setup.sh
+$ source g4bl-setup.sh
+$ g4bl
+$ g4bl ~/Downloads/G4_FinalCooling_auto.g4bl beamfile=distribution2.txt outname=None
+
