@@ -1,0 +1,56 @@
+# Simulates phase rotation RF cavity
+
+# Created by: D. Fu
+# Updated: July 6, 2023
+
+######################### DEFINE PHYSICS MODEL
+  
+  param zbegin=0.0
+  start initialZ=$zbegin  y=0.000   x=0.00   z=0.00    radiusCut=300
+  param steppingFormat=N,GLOBAL,CL,STEP,VOL,PROCESS,P,KE,POLAR,B
+  param fieldVoxels=400,400,400 
+  param maxStep=0.5
+
+  physics QGSP_BERT doStochastics=1 spinTracking=1 synchrotronRadiation=1 # disable=Decay
+
+  trackcuts keep=mu-,mu+
+
+  particlecolor proton=1,1,1 
+  particlecolor pi+=0,1,0 
+  particlecolor mu+=1,0.5,0   # orange
+  particlecolor e+=1,0,0      # red
+  particlecolor gamma=0,0,1   # blue
+  particlecolor e-=1,0.5,0    # orange
+  
+######################### DEFINE INPUT BEAM
+
+  param -unset nparticles=12000
+  param -unset beamfile=drifted.txt
+  param -unset beamZ=0
+
+  beam ascii filename=$beamfile nEvents=$nparticles beamZ=$beamZ
+  
+  param -unset refMomentum=87
+  
+  reference particle=mu+ referenceMomentum=$refMomentum beamZ=0
+
+######################### DEFINE PILLBOX
+
+  param apertr=300
+  param -unset Vrfcool=16
+  param -unset ficool=35
+  param -unset RF_length=2500.0
+  param -unset frfcool=0.20125
+  pillbox cavity innerLength=$RF_length frequency=$frfcool maxGradient=$Vrfcool irisRadius=$apertr win1Thick=0.0 win2Thick=0.0 wallThick=5.0 collarThick=0.0 phaseAcc=$ficool kill=1 maxStep=10
+
+######################### DEFINE VIRTUAL SCREENS
+
+  virtualdetector VD radius=$apertr length=0.2 color=1,1,1 format=asciiExtended coordinates=centerline
+
+######################### PLACE ELEMENTS
+
+  param -unset outname=particles_after
+  
+  place cavity front=1 z=1
+  
+  place VD front=1 rename=$outname z=$RF_length+50
